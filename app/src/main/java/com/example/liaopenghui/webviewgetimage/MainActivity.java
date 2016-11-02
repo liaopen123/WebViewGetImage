@@ -9,7 +9,9 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements OnGetImageListListner {
 
     private static final String TAG = "MainActivity";
     private WebView webView;
@@ -24,13 +26,14 @@ public class MainActivity extends AppCompatActivity {
         //打开JS交互
         webView.getSettings().setJavaScriptEnabled(true);
         //
-        webView.loadUrl("http://blog.csdn.net/wangtingshuai/article/details/8635787");
+        webView.loadUrl("http://post.smzdm.com/p/445965/");
         //添加JS交互接口类，并起名imagelistener
-        webView.addJavascriptInterface(new JavascriptInterface(this),"imagelistner");
+        webView.addJavascriptInterface(new JavascriptInterface(this,this),"imagelistner");
         webView.setWebViewClient(new MyWebViewClient(new onPagerFinishListner() {
             @Override
             public void onPagerFinish() {
                 addImageClickListner();
+                getSource();//获取网页源码
             }
         }));
     }
@@ -53,6 +56,17 @@ public class MainActivity extends AppCompatActivity {
                 "})()");
     }
 
+    /**
+     * 得到网页的源码
+     */
+    public void getSource(){
+        webView.loadUrl("javascript:window.imagelistner.showSource('<head>'+" +
+                "document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+    }
 
 
+    @Override
+    public void getImageList(List<String> lists) {
+
+    }
 }
